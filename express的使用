@@ -1,0 +1,336 @@
+Express.js 是一种流行、轻量级的开源 Web 应用程序框架，用于开发基于 Node.js 的服务器端 Web 应用程序。它提供了强大的功能集，适用于 Web 和移动应用程序。Express.js 旨在支持单页、多页和混合式 Web 应用程序的开发。Express.js 提供了广泛的功能，包括路由、中间件、模板等，用于创建 Web 应用程序。它易于学习，非常适合构建 RESTful API、Web 应用程序和 Web 服务。Express.js 广泛用于各种行业的 Web 应用程序开发，包括医疗保健、电子商务、金融和社交媒体等。
+
+node.js可以用来写后端，使用express.js框架
+
+1·新建文件夹
+```cpp
+mkdir expressLearn 
+```
+2·进入文件夹
+
+```cpp
+cd expressLearn 
+```
+3·初始化
+
+```cpp
+npm init -y
+```
+生成package.josn
+小技巧
+package.josn中有
+![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/48447fe9958c4d9888735aa14b117ac5.png)
+npm run test
+![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/f920bf6060c54095b02ab8d431ec1cb3.png)
+npm run deploy = npx hardhat deploy --network   rinkeby
+
+4·安装express（局部安装，安装项目下）
+
+```cpp
+npm install express --save
+```
+npm install express --save 命令会将 express 模块安装到当前项目的本地 node_modules 目录中，并将其添加到项目的 dependencies 中。这是一种局部安装方式，只有在当前项目中才能使用安装的模块。
+
+如果要全局安装 express，可以使用 npm install -g express 命令。全局安装会将模块安装到全局 node_modules 目录中，以便在命令行中使用 express 命令创建应用程序。但是，在实际开发中，全局安装并不是推荐的做法，因为它可能导致版本冲突和依赖问题。
+5·新建app.js文件
+
+```cpp
+const express = require('express')
+const app = express()
+
+app.get('/', function (req, res) {
+  res.send('Hello World')
+})
+
+app.listen(3000)
+```
+这段代码使用 Node.js 中的 Express 框架创建了一个简单的 HTTP 服务器。让我来解释一下代码的每个部分：
+
+    const express = require('express'): 这一行引入了 Express 框架，将其赋值给变量 express。
+
+    const app = express(): 创建了一个 Express 应用程序实例，并将其赋值给变量 app。通过调用 express() 函数，我们创建了一个 Express 应用程序。
+
+    app.get('/', function (req, res) { ... }): 这一行指定了一个针对根路径 / 的 HTTP GET 请求的处理函数。当用户在浏览器中访问服务器的根路径时，Express 将执行这个处理函数。
+
+    res.send('Hello World'): 在处理函数中，我们使用 res.send() 方法向客户端发送了一个简单的字符串响应 "Hello World"。
+
+    app.listen(3000): 最后一行启动了一个 HTTP 服务器，监听在端口 3000 上。这意味着当你在浏览器中输入 http://localhost:3000 时，Express 应用程序将会响应请求并发送 "Hello World" 到浏览器。
+6·命令行运行
+
+```cpp
+node app.js
+```
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/bf928a4d52eb413792aa74fba921877a.png)
+
+添加功能
+
+
+```cpp
+const express = require('express')
+const app = express()
+
+app.get('/', function (req, res) {
+  res.send('Hello World')
+})
+
+
+const products = [
+    {
+        "name":"Television",
+        "price": 2000,
+        "brand":"Xiaomi"
+    },
+    {
+        "name":"Laptop",
+        "price":5000,
+        "brand":"Lenovo"
+    }
+]
+ 
+app.get('/products/:brand', (req, res)=> {
+    const brand = req.params.brand
+    console.log(brand)
+    // const filteredProducts = products.filter( (product)=>{
+    //     return product.brand === brand
+    // })
+    const filteredProducts = products.filter(product=>product.brand === brand)
+    res.send(filteredProducts)
+})
+const port = 3000
+app.listen(port,()=>{
+    console.log(`Server is running on ${port}...`)
+})
+
+
+
+```
+命令行运行
+
+```cpp
+node app.js
+```
+![http://localhost:3000/products/Xiaomi](https://img-blog.csdnimg.cn/direct/bccd171286e341489916b305a081568e.png)
+
+
+中间件
+中间件是一种软件，用于在不同的应用程序之间传递数据和消息，以便它们可以相互通信。中间件通常用于实现不同的应用程序之间的集成，以便它们可以共享数据和服务。中间件可以作为基础设施和应用程序之间的桥梁，从而提高应用程序的互操作性和可扩展性。常见的中间件包括消息队列、Web服务器、RPC框架、缓存系统等。
+
+```cpp
+
+app.use(requestUrlLogger);
+
+app.get('/', function (req, res) {
+  res.send('Hello World')
+})
+```
+上传数据
+
+```cpp
+const express = require('express')
+const app = express()
+
+const requestUrlLogger = (req, res, next)=>{
+    console.log("url is :",req.url);
+    next();
+}
+
+app.use(requestUrlLogger);
+app.use(express.json())//post获取数据时使用
+
+app.get('/', function (req, res) {
+  res.send('Hello World')
+})
+
+
+const products = [
+    {
+        "name":"Television",
+        "price": 2000,
+        "brand":"Xiaomi"
+    },
+    {
+        "name":"Laptop",
+        "price":5000,
+        "brand":"Lenovo"
+    }
+]
+ 
+app.get('/products/:brand', (req, res)=> {
+    const brand = req.params.brand
+    // const filteredProducts = products.filter( (product)=>{
+    //     return product.brand === brand
+    // })
+    const filteredProducts = products.filter(product=>product.brand === brand)
+    res.send(filteredProducts)
+})
+
+
+const port = 3000
+app.listen(port,()=>{
+    console.log(`Server is running on ${port}...`)
+})
+
+
+app.post('/products',(req,res)=>{
+    const name = req.body.name;
+    const price = req.body.price;
+    const brand = req.body.brand;
+
+    products.push({name,price,brand});//键：值，名字一样可以只写一个
+
+    res.json({
+        "message":"New product created",
+        "data":products
+    })
+})
+
+
+
+```
+
+**postman和apipost**
+Postman和APIpost都是API测试工具，具有类似的功能，但使用方式和界面略有不同。
+
+Postman是一款常用的API调试工具，可以快速构建、测试和文档化API。它支持多种HTTP请求类型，例如GET、POST、PUT、DELETE等，还可以设置请求头、请求参数和请求体等。Postman还可以对API进行自动化测试和集成测试，支持断言、数据驱动和测试报告等功能。同时，Postman还提供了丰富的插件和扩展，可以方便地集成到开发工作流中。
+
+APIpost是一款在线API测试工具，基于Web界面操作，无需安装任何软件。它可以通过URL、HEAD、GET、POST等多种方式发送HTTP请求，并可以设置请求头、请求参数和请求体等。APIpost还支持Mock API，可以根据API文档自动生成伪数据，并支持API文档自动生成和分享。APIpost还提供了多种主题和语言版本，可以满足不同用户的需求。
+
+总的来说，Postman更适合用于本地开发和测试，而APIpost则更适合用于在线协作和共享。使用哪一款工具，可以根据自己的实际需求来选择。Postman和APIpost都是API测试工具，具有类似的功能，但使用方式和界面略有不同。
+
+Postman是一款常用的API调试工具，可以快速构建、测试和文档化API。它支持多种HTTP请求类型，例如GET、POST、PUT、DELETE等，还可以设置请求头、请求参数和请求体等。Postman还可以对API进行自动化测试和集成测试，支持断言、数据驱动和测试报告等功能。同时，Postman还提供了丰富的插件和扩展，可以方便地集成到开发工作流中。
+
+APIpost是一款在线API测试工具，基于Web界面操作，无需安装任何软件。它可以通过URL、HEAD、GET、POST等多种方式发送HTTP请求，并可以设置请求头、请求参数和请求体等。APIpost还支持Mock API，可以根据API文档自动生成伪数据，并支持API文档自动生成和分享。APIpost还提供了多种主题和语言版本，可以满足不同用户的需求。
+
+总的来说，Postman更适合用于本地开发和测试，而APIpost则更适合用于在线协作和共享。使用哪一款工具，可以根据自己的实际需求来选择。
+
+Postman
+![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/ea8a0733dd1d4015956acb08612ffd8c.png)
+
+
+**模版引擎**
+**pug和ejs**
+
+Pug (以前称为Jade) 是一种模板引擎，它使用缩进和简洁的语法来生成HTML。它允许使用变量、逻辑语句、迭代器、函数等功能，使得编写HTML模板更加方便快捷。
+
+EJS (Embedded JavaScript) 是一种JavaScript模板引擎，它充分利用了JavaScript的强大功能，允许使用变量、逻辑语句、函数等功能来生成HTML。相比于Pug，EJS语法更加接近HTML，也更加灵活。
+
+两种模板引擎都有各自的优点和适用场景。Pug适合于需要频繁更新HTML内容的大型应用程序，它可以减少HTML模板的代码量，使得维护更加便捷。而EJS则更适合于只需要做少量更新的应用程序，因为它的语法更加接近HTML，更容易阅读和理解。
+
+https://pugjs.org/
+![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/7250035dfce04066963b9b05c323d599.png)
+1·安装pug
+![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/cb786f58879848759bcdab0cda00a8e1.png)
+2·app.js
+![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/92e885f3e5ef4e4880c6592a86fb0989.png)
+这是在 Node.js 应用程序中设置 Pug 模板引擎的语句。
+
+第一行代码 `app.set('view engine','pug')` 指定了应用程序默认使用的模板引擎为 Pug。这样，在 `res.render` 中调用视图文件时，应用程序会自动使用 Pug 引擎来解析模板。
+
+第二行代码 `app.set('views','./views')` 指定了存放视图文件的文件夹，这里是 `./views`，也就是应用程序的根目录下的 `views` 文件夹。这个文件夹下的文件会被视为视图文件，可以通过 `res.render` 方法来渲染。这是在 Node.js 应用程序中设置 Pug 模板引擎的语句。
+
+第一行代码 `app.set('view engine','pug')` 指定了应用程序默认使用的模板引擎为 Pug。这样，在 `res.render` 中调用视图文件时，应用程序会自动使用 Pug 引擎来解析模板。
+
+第二行代码 `app.set('views','./views')` 指定了存放视图文件的文件夹，这里是 `./views`，也就是应用程序的根目录下的 `views` 文件夹。这个文件夹下的文件会被视为视图文件，可以通过 `res.render` 方法来渲染。这是在 Node.js 应用程序中设置 Pug 模板引擎的语句。
+
+第一行代码 `app.set('view engine','pug')` 指定了应用程序默认使用的模板引擎为 Pug。这样，在 `res.render` 中调用视图文件时，应用程序会自动使用 Pug 引擎来解析模板。
+
+第二行代码 `app.set('views','./views')` 指定了存放视图文件的文件夹，这里是 `./views`，也就是应用程序的根目录下的 `views` 文件夹。这个文件夹下的文件会被视为视图文件，可以通过 `res.render` 方法来渲染。
+
+3·新建文件夹
+views并在下面新建home.pug
+![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/732dbbe73b0a42a08f72de86040e1d25.png)
+
+3·home.js
+![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/c0ee6c259cb84c7ab2a4f013e88bec43.png)
+4·app.js
+![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/e0947844ec174a80a54ecd20cd73bab5.png)
+5·node app.js
+![在这里插入图片描述](https://img-blog.csdnimg.cn/direct/db2725cb03064a80adedf29c789c1e97.png)
+
+6·nodemon的使用
+nodemon是一个Node.js开发的工具，可以帮助Node.js应用程序自动重新启动。它可以监视您的代码更改，并在更改发生时自动重启应用程序。
+
+以下是使用nodemon的步骤：
+
+1. 全局安装nodemon:
+
+   ```
+   npm install -g nodemon
+   ```
+
+2. 在项目目录运行nodemon:
+
+   ```
+   nodemon app.js
+   ```
+
+   其中，app.js是您的Node.js应用程序的入口文件。
+
+3. 现在，nodemon将监视您的代码更改。每当您修改代码并保存时，nodemon将自动重新启动应用程序。
+
+   您还可以在运行nodemon时通过添加参数来添加其他配置选项，例如：
+
+   ```
+   nodemon --watch controllers --exec node app.js
+   ```
+
+   这将监视controllers文件夹的更改并在更改发生时重新启动应用程序。
+
+希望这可以帮助您开始使用nodemon！nodemon是一个Node.js开发的工具，可以帮助Node.js应用程序自动重新启动。它可以监视您的代码更改，并在更改发生时自动重启应用程序。
+
+以下是使用nodemon的步骤：
+
+1. 全局安装nodemon:
+
+   ```
+   npm install -g nodemon
+   ```
+
+2. 在项目目录运行nodemon:
+
+   ```
+   nodemon app.js
+   ```
+
+   其中，app.js是您的Node.js应用程序的入口文件。
+
+3. 现在，nodemon将监视您的代码更改。每当您修改代码并保存时，nodemon将自动重新启动应用程序。
+
+   您还可以在运行nodemon时通过添加参数来添加其他配置选项，例如：
+
+   ```
+   nodemon --watch controllers --exec node app.js
+   ```
+
+   这将监视controllers文件夹的更改并在更改发生时重新启动应用程序。
+
+希望这可以帮助您开始使用nodemon！nodemon是一个Node.js开发的工具，可以帮助Node.js应用程序自动重新启动。它可以监视您的代码更改，并在更改发生时自动重启应用程序。
+
+以下是使用nodemon的步骤：
+
+1. 全局安装nodemon:
+
+   ```
+   npm install -g nodemon
+   ```
+
+2. 在项目目录运行nodemon:
+
+   ```
+   nodemon app.js
+   ```
+
+   其中，app.js是您的Node.js应用程序的入口文件。
+
+3. 现在，nodemon将监视您的代码更改。每当您修改代码并保存时，nodemon将自动重新启动应用程序。
+
+   您还可以在运行nodemon时通过添加参数来添加其他配置选项，例如：
+
+   ```
+   nodemon --watch controllers --exec node app.js
+   ```
+
+   这将监视controllers文件夹的更改并在更改发生时重新启动应用程序。
+
+
